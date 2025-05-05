@@ -1,2 +1,26 @@
 # NanoGPT
 Introducing a free, easy-to-use AI chatbot, built for everyone to use without any sign-ups or fees!
+
+# Install the necessary packages
+!pip install -q transformers accelerate
+
+from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
+
+# Model identifier for TinyLlama
+model_id = "TinyLlama/TinyLlama-1.1B-Chat-v1.0"
+
+# Load tokenizer and model
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto")
+
+# Create a chatbot pipeline
+chat = pipeline("text-generation", model=model, tokenizer=tokenizer)
+
+# Chat function to generate responses
+def ask(question):
+    prompt = f"<s>[INST] {question} [/INST]"
+    response = chat(prompt, max_new_tokens=100, do_sample=True, top_p=0.95, temperature=0.7)
+    print(response[0]["generated_text"].split("[/INST]")[-1].strip())
+
+# Example usage: Ask a question
+ask("What is quantum computing in simple terms?")
